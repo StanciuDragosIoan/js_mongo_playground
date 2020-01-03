@@ -1,0 +1,14 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "Sample crud using mongo and node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dragos",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^2.2.36"
+  }
+}
