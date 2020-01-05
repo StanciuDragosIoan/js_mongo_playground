@@ -1,102 +1,51 @@
-const submitBtn = document.getElementById("expense");
-submitBtn.addEventListener("click", saveExpense);
-const expenseDetails = document.getElementById("details");
-const expenseValue = document.getElementById("value");
-const expenseType = document.getElementById("type");
-
-
-
-let expenses = [];
-
-id = 0;
-
-function saveExpense(){
-
-    id += 1;
-
-    let expense = {
-        value : expenseValue.value,
-        details: expenseDetails.value,
-        type: expenseType.value
-    }
-
-//add to data structure
-
-    // expenses.push(expense);
-
-    // expenseDetails.value = "";
-    // expenseValue.value = "";
-    // expenseType.value = "";
-
-    // console.log(expenses);
-
-    saveToDataBase();
-     
-}
-
-
-//DB Logic
-
-/*
-    dbname = expenses;
-
-    db collection = expenses_values;
-
-    *db created fropm terminal for now
-    //insert 1 value:
-
-    db.expenses_values.insert({value: 30, type: "test expense", details: "test"})
-
-
-
-    //check if inserted
-    db.expenses_values.find() 
-*/
-
-// var MongoClient = require('mongodb').MongoClient;
-
+var express = require("express");
+var app = express();
+var port = 3000;
  
-var MongoClient = require(['mongodb'], function (mongoClient) {
-    //foo is now loaded.
-});
-var url = "mongodb://localhost:27017/";
+// app.get("/", (req, res) => {
+//     res.send("Hello World");
+// });
+
+//middleware
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
- 
+//DB logic
+var mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://localhost:27017/expenses-demo");
 
 
-function saveToDatabase() {
-       // Get the documents collection
-       var collection = db.collection('expenses_values');
-
-       const expense = {
-        value : expenseValue.value,
-        details: expenseDetails.value,
-        type: expenseType.value
-      }
-
-       // Insert expense
-       collection.insertOne(myobj, function(err, res) {
-        if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });
-}
-
-
-
-var MongoClient = require('mongodb').MongoClient
-, assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-
-  saveToDatabase(db, function() {
-    db.close();
+//define schema
+var expenseSchema = new mongoose.Schema({
+    value: Number,
+    type: String,
+    details: String
   });
-});
 
+//create model
+var Expense = mongoose.model("Expense", expenseSchema);
+
+//POST route
+app.post("/addexpense", (req, res) => {
+    var myData = new Expense(req.body);
+    myData.save()
+      .then(item => {
+        res.send("item saved to database");
+      })
+      .catch(err => {
+        res.status(400).send("unable to save to database");
+      });
+  });
+
+
+//display client-side form with sendFile() 
+app.use("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+  });
+ 
+app.listen(port, () => {
+  console.log("Server listening on port " + port);
+});

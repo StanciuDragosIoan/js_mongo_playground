@@ -1,0 +1,25 @@
+Courses:
+
+Node
+MERN
+Symfony
+React
+PHP X 3
+Docker
+
+
+Projects:
+
+expenses app (node/express/mongo)
+
+Review:
+
+OOP php
+
+Order:
+
+Symfony
+MERN
+PHP
+Docker
+
